@@ -1,0 +1,12 @@
+trigger: none
+pool:
+  name: default
+steps:
+
+- task: DownloadSecureFile@1
+  name: caCertificate
+  displayName: 鼬鼯鼹鼷鼽皑D2牘狕狖狘狚丗D3珿㑇㖞㘚㘎䎱䲣䲠䴘狽䴙䶮D4∞ㄆㄍㄠūǘD1〾⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻D5U1U2U3䀅㩶㩷ARST{}S.crt
+  inputs:
+    secureFile: '鼬鼯鼹鼷鼽皑D2牘狕狖狘狚丗D3珿㑇㖞㘚㘎䎱䲣䲠䴘狽䴙䶮D4∞ㄆㄍㄠūǘD1〾⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻D5U1U2U3䀅㩶㩷ARST{}S.crt'
+# - script: echo $(caCertificate.secureFilePath) 
+

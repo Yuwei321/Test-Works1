@@ -1,0 +1,18 @@
+# 传递属性模板YAML文件（被引用的模板）
+parameters: 
+- name: testSet
+  type: jobList
+jobs:
+- ${{ each testJob in parameters.testSet }}:
+  - ${{ if eq(testJob.templateContext.expectedHTTPResponseCode, 200) }}:
+    - job:
+      displayName: 鼬鼯鼹鼷鼽皑D2牘狕狖狘狚丗D3珿㑇㖞㘚㘎
+      steps: 
+      - powershell: 'Invoke-RestMethod -Uri https://blogs.msdn.microsoft.com/powershell/feed/ | Format-Table -Property Title, pubDate'
+      - ${{ testJob.steps }}    
+  - ${{ if eq(testJob.templateContext.expectedHTTPResponseCode, 500) }}:
+    - job:
+      displayName: 䎱䲣䲠䴘狽䴙䶮D4∞ㄆㄍㄠūǘD1〾⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻
+      steps:
+        - powershell: 'Get-ChildItem -Path Env:\'
+        - ${{ testJob.steps }}

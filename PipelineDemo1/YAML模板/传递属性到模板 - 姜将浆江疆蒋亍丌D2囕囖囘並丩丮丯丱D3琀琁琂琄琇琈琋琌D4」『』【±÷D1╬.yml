@@ -1,0 +1,18 @@
+# 生成管道YAML文件
+
+trigger: none
+pool: Default
+extends:
+  template: 传递属性模板-亘兀丐廿卅丕亘鬲D2怈怉怋怌怐怑怓怗D3繞繟繠繡繢繣繤繥⺷⺻⻊D4∨∑∏∪D1゛゜ヽヾ〆ゝD5U1U2.yml
+  parameters:
+    testSet:
+    - job: positive_test
+      templateContext:
+        expectedHTTPResponseCode: 200
+      steps:
+      - script: echo "响应代码为200时，模板将发出REST请求。" 
+    - job: negative_test
+      templateContext:
+        expectedHTTPResponseCode: 500
+      steps:
+      - script: echo "响应代码为500时，模板将输出所有环境变量以进行调试。"

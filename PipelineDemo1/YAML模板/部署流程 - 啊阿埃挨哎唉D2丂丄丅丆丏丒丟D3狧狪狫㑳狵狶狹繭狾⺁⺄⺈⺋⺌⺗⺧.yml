@@ -1,0 +1,99 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+# 管道自动触发规则
+trigger: none
+
+# 指定代理池
+pool: Default
+
+# 设置变量
+variables:
+  buildConfiguration: 'Release'
+
+# YAML脚本执行步骤
+steps:
+
+# 生成项目前需要安装.NET Core SDK
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '3.0.x'
+    includePreviewVersions: true
+
+# 生成项目前需要安装NuGet工具
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '5.1.0'
+    checkLatest: true
+
+# 生成项目前需要需要将所有与此项目相关的依赖性和配置文件匹配到正确的状态
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*Test/*.csproj'
+    feedsToUse: 'select'
+    noCache: true
+
+# 使用.NET测试驱动或者使用测试计划执行单元测试
+# - task: DotNetCoreCLI@2
+#   retryCountOnTaskFailure: 1
+#   displayName: 单元测试：癌蔼矮艾碍爱隘鼾D2丠両狛丣囆囇囈囉囋D3狜狝狟㥮狢狤狥狦D4ˇ¨〃々—～D1∟∣≒≧⊿═║D5U1U2U3㐈㐉㐊㩴㩵䀄A$&'ABCS
+#   inputs:
+#     command: test
+#     testRunTitle: ①Ⅻㄨㄩ 啊阿鼾齄丂丄狚狛狜狝﨨﨩ˊˋ˙–⿻〇㐀㐁䶴䶵U1[]U2[]U3[]
+#     projects: '**/*Test/*.csproj'
+#     arguments: '--configuration $(buildConfiguration) --filter TestCategory=UnitTest'
+#   continueOnError: true
+
+# 生成项目：使用发布配置生成项目及其依赖项
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+
+# 生成项目：指定win-x64操作系统和体系结构进行生成项目及其依赖项
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build test'
+  inputs:
+    projects: '**/*Test/*.csproj'
+    arguments: '--runtime win-x64'
+  continueOnError: true
+
+# 将应用程序及其依赖项发布到文件夹，以便部署到托管系统
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/TechFabricSln/TechFabricSln.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/TechFabricSln/'
+    zipAfterPublish: true
+
+# 将单元测试项目发布到文件夹
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish test --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'test/TechFabricSln.Test/TechFabricSln.Test.csproj'
+    arguments: '-p:PublishChromeDriver=true --runtime win-x64 --output $(Build.ArtifactStagingDirectory)/TechFabricSln.Test/'
+    zipAfterPublish: false
+
+# 将生成工件发布到Azure Pipelines
+- task: PublishBuildArtifacts@1
+  displayName: 生成工件：姜将浆江疆蒋亍丌D2囕囖囘並丩丮丯丱D3琀琁琂琄琇琈琋琌D4」『』【±÷D1╬╲╳D5U1U2U3䀆䀇䀈䀌䶫䶬A+,-345S
+  inputs:
+    ArtifactName: 繬D4⊥∥∠≠∵∴D1▕▼▽◢◥☉⊕〒D5U1U2U3䶭䶯
+  condition: succeeded()
+
+
+# 将生成项目部署到Azure云服务Web应用程序 URL: http://cti-gb18030.azurewebsites.net
+- task: AzureWebApp@1
+  displayName: 部署到Azure云：澶濂濡濮濞濠濯瀚D2氿汃汄汅汈汋汌汍D3龕龖龗龘龜龝龞龡D4☆★○●◎◇◆□■△▲※D1〞〡〢〣〤〥〦〧〨〩D5U1U2U3䀉䀊㩸䀋䦵䦸A@pwxWUS
+  inputs:
+    azureSubscription: '澶濂濡濮濞濠濯瀚D2氿汃汄汅汈汋汌汍D3龕龖龗龘龜龝龞龡D4☆★○●◎◇◆□■△▲※'
+    appType: 'webApp'
+    appName: 'cti-gb18030'
+    package: '$(Build.ArtifactStagingDirectory)/**/TechFabricSln.zip'
+    deploymentMethod: 'auto'
